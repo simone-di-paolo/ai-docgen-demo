@@ -14,6 +14,10 @@ SRC_FOLDER = "src/"
 GIT_BOT_EMAIL = "actions-bot@github.com"
 GIT_BOT_NAME = "GitHub Actions Bot"
 
+# Modalità Debug: se "true", stampa informazioni dettagliate
+DEBUG = os.getenv("DEBUG_MODE", "false").lower() == "true"
+
+
 # --- 2. Funzioni di Supporto ---
 
 def get_changed_files():
@@ -25,7 +29,7 @@ def get_changed_files():
         ).stdout.strip()
         return diff_output.split('\n') if diff_output else []
     except subprocess.CalledProcessError as e:
-        print(f"Errore durante l'esecuzione di git diff: {e}")
+        print(f"[ERRORE] Durante l'esecuzione di git diff: {e}")
         return []
 
 def get_file_content(filepath):
@@ -41,7 +45,7 @@ def create_backup(filepath):
     if os.path.exists(filepath):
         backup_path = f"{filepath}.bak"
         shutil.copy2(filepath, backup_path)
-        print(f"Backup creato per {filepath} in {backup_path}")
+        print(f"  -> Backup creato: {backup_path}")
 
 def get_component_name_from_path(filepath):
     """Estrae un nome di componente pulito dal percorso del file."""
@@ -72,15 +76,31 @@ def generate_new_documentation(component_name, file_diff, current_docs):
     **NUOVA DOCUMENTAZIONE PER {component_name}:**
     """
 
+    if DEBUG:
+        print("\n" + "="*20 + " DEBUG: PROMPT PER L'IA " + "="*20)
+        print(prompt)
+        print("="*60 + "\n")
+
     headers = {"Content-Type": "application/json"}
     data = {"contents": [{"parts": [{"text": prompt}]}]}
 
     try:
         response = requests.post(GEMINI_API_ENDPOINT, headers=headers, data=json.dumps(data), timeout=180)
         response.raise_for_status()
+
+        if DEBUG:
+            print("\n" + "="*20 + " DEBUG: RISPOSTA RAW DALL'IA " + "="*20)
+            print(response.text)
+            print("="*60 + "\n")
+
         return response.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+    except requests.exceptions.HTTPError as e:
+        print(f"[ERRORE] Errore HTTP dall'API Gemini per {component_name}: {e}")
+        print(f"  -> Status Code: {e.response.status_code}")
+        print(f"  -> Response Body: {e.response.text}")
+        return None
     except requests.exceptions.RequestException as e:
-        print(f"Errore API Gemini per {component_name}: {e}")
+        print(f"[ERRORE] Errore di connessione all'API Gemini per {component_name}: {e}")
         return None
 
 def commit_and_push_changes(updated_docs):
@@ -92,32 +112,30 @@ def commit_and_push_changes(updated_docs):
         subprocess.run(["git", "add", doc_file])
     
     commit_message = f"docs: :robot: Aggiornamento automatico per {', '.join([get_component_name_from_path(f) for f in updated_docs])}"
+    print(f"  -> Messaggio di commit: {commit_message}")
     subprocess.run(["git", "commit", "-m", commit_message])
     subprocess.run(["git", "push"])
-    print("Documentazione aggiornata e inviata con successo.")
+    print("\n>>> Documentazione inviata con successo! <<<")
 
 # --- 3. Flusso Principale ---
 
 if __name__ == "__main__":
-    print("Avvio script di documentazione granulare...")
+    print("="*20 + " AVVIO SCRIPT DOCUMENTAZIONE " + "="*20)
+    
+    print("\n--- FASE 1: Rilevamento Modifiche ---")
     changed_files = get_changed_files()
-
     if not changed_files:
         print("Nessun file sorgente modificato. Uscita.")
         exit()
-
     print(f"File modificati rilevati: {', '.join(changed_files)}")
-    updated_doc_files = []
 
-    # Mappa i componenti ai loro file di codice per raggruppare i diff
+    print("\n--- FASE 2: Raggruppamento Diff per Componente ---")
     component_diffs = {}
-
     for file_path in changed_files:
         if not (file_path.endswith(".jsx") or file_path.endswith(".css")):
             continue
         
         component_name = get_component_name_from_path(file_path)
-        # Se il nome del file è App, cerca un nome più specifico dalla cartella padre
         if component_name == "App" and "components" in file_path:
              path_parts = file_path.split(os.sep)
              try:
@@ -125,7 +143,7 @@ if __name__ == "__main__":
                  if components_index + 1 < len(path_parts):
                      component_name = path_parts[components_index + 1]
              except ValueError:
-                 pass # Mantieni "App" se la logica fallisce
+                 pass
 
         if component_name not in component_diffs:
             component_diffs[component_name] = []
@@ -135,28 +153,32 @@ if __name__ == "__main__":
             capture_output=True, text=True
         ).stdout
         component_diffs[component_name].append(file_diff_output)
+    print("Diff raggruppati con successo.")
 
+    print("\n--- FASE 3: Elaborazione e Generazione Documentazione ---")
+    updated_doc_files = []
     for component_name, diffs in component_diffs.items():
         doc_path = os.path.join(DOCS_FOLDER, f"{component_name}.md")
         full_diff = "\n".join(diffs)
 
-        print(f"--- Elaborazione Componente: {component_name} ---")
+        print(f"\n-> Elaborazione Componente: {component_name}")
         current_documentation = get_file_content(doc_path)
         
-        print("Creazione del prompt per l'IA...")
         new_documentation = generate_new_documentation(component_name, full_diff, current_documentation)
 
-        if new_documentation and new_documentation != current_documentation:
-            print(f"Documentazione per {component_name} aggiornata dall'IA.")
+        if new_documentation and new_documentation.strip() != current_documentation.strip():
+            print(f"  -> Documentazione per {component_name} aggiornata dall'IA.")
             create_backup(doc_path)
             with open(doc_path, "w", encoding="utf-8") as f:
                 f.write(new_documentation)
             updated_doc_files.append(doc_path)
         else:
-            print(f"Nessun aggiornamento significativo per {component_name}.")
+            print(f"  -> Nessun aggiornamento significativo per la documentazione di {component_name}.")
 
+    print("\n--- FASE 4: Finalizzazione ---")
     if updated_doc_files:
-        print("Invio delle modifiche al repository...")
+        print("Rilevati aggiornamenti alla documentazione. Invio delle modifiche...")
         commit_and_push_changes(updated_doc_files)
     else:
-        print("Nessun file di documentazione è stato modificato.")
+        print("Nessun file di documentazione è stato modificato. Nessun commit necessario.")
+

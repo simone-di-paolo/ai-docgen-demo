@@ -2,7 +2,6 @@
 
 name: Update Documentation with AI on Merge
 
-# Triggers when a pull request is closed and merged into the main branch
 on:
   pull_request:
     types: [closed]
@@ -11,34 +10,28 @@ on:
 
 jobs:
   update-docs:
-    # This condition ensures the job only runs if the PR was merged
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
-      # We need write permissions to push code back to the repo
       contents: write
     steps:
-      # 1. Checkout the code from the main branch after the merge
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # We need to fetch more than the last commit to get the diff
           fetch-depth: 2
 
-      # 2. Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      # 4. Run the Python script to generate documentation
       - name: Run AI Documentation Script
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Correct secret name
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEBUG_MODE: "true" # Enable detailed logging
         run: python ./scripts/generate_docs.py
