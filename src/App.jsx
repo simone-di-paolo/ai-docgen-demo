@@ -1,20 +1,17 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { increment, decrement } from './redux/action/counterActions';
-import { selectCount } from './redux/selector/counterSelector';
+import React from 'react';
+import Hero from './components/Hero';
+import Features from './components/Features';
+import InteractiveDemo from './components/InteractiveDemo';
+import Showcase from './components/Showcase';
 import './App.css';
 
 function App() {
-  const count = useSelector(selectCount);
-  const dispatch = useDispatch();
-
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <h1>Redux Counter</h1>
-        <p>Count: {count}</p>
-        <button onClick={() => dispatch(increment())}>Increment</button>
-        <button onClick={() => dispatch(decrement())}>Decrement</button>
-      </header>
+    <div className="App">
+      <Hero />
+      <Features />
+      <InteractiveDemo />
+      <Showcase />
     </div>
   );
 }
