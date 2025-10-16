@@ -17,6 +17,9 @@ GIT_BOT_NAME = "GitHub Actions Bot"
 
 DEBUG = os.getenv("DEBUG_MODE", "false").lower() == "true"
 
+# TODO per domani: devo ricordarmi di implementare una GET verso la
+# API di Telegram per farmi inviare cosa fa l'AI o non abbiamo traccia
+# perché aggiungere un vero e proprio file log comporterebbe un ulteriore commit
 
 # === UTILS ===
 
