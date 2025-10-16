@@ -1,6 +1,6 @@
 # Interactive AI-Generated Landing Page
 
-This project is a modern and visually appealing interactive landing page built with React and Vite. It was designed and developed entirely by an AI to demonstrate rapid UI/UX implementation and modern web development practices.
+This project is a modern and visually appealing interactive landing page built with React. It has been developed in order to test an AI Business Case it's a Demo.
 
 ## Features
 
@@ -43,14 +43,3 @@ To get a local copy up and running, follow these simple steps.
     ```sh
     npm run dev
     ```
-
----
-
-## Original Vite + React README
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
--   [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh.
--   [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh.
