@@ -6,22 +6,22 @@ import json
 import re
 import shutil
 
-# --- 1. Impostazioni e Costanti ---
+# === CONFIGS ===
+
 API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_API_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={API_KEY}"
+GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 DOCS_FOLDER = "docs/"
 SRC_FOLDER = "src/"
 GIT_BOT_EMAIL = "actions-bot@github.com"
 GIT_BOT_NAME = "GitHub Actions Bot"
 
-# Modalità Debug: se "true", stampa informazioni dettagliate
 DEBUG = os.getenv("DEBUG_MODE", "false").lower() == "true"
 
 
-# --- 2. Funzioni di Supporto ---
+# === UTILS ===
 
 def get_changed_files():
-    """Restituisce una lista di file modificati nell'ultimo commit nella cartella src."""
+    """Get the list of edited file during in the last commit"""
     try:
         diff_output = subprocess.run(
             ["git", "diff", "HEAD~1", "HEAD", "--name-only", "--", SRC_FOLDER],
@@ -33,7 +33,6 @@ def get_changed_files():
         return []
 
 def get_file_content(filepath):
-    """Legge il contenuto di un file."""
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             return f.read()
@@ -41,18 +40,18 @@ def get_file_content(filepath):
         return ""
 
 def create_backup(filepath):
-    """Crea una copia di backup di un file."""
+    """Create a backup file of the original documentation"""
     if os.path.exists(filepath):
         backup_path = f"{filepath}.bak"
         shutil.copy2(filepath, backup_path)
         print(f"  -> Backup creato: {backup_path}")
 
 def get_component_name_from_path(filepath):
-    """Estrae un nome di componente pulito dal percorso del file."""
+    """Extract the name of the component based on the file name"""
     return os.path.splitext(os.path.basename(filepath))[0]
 
 def generate_new_documentation(component_name, file_diff, current_docs):
-    """Interroga l'API di Gemini per aggiornare la documentazione di un singolo componente."""
+    """Make a call to Gemini API to generate new documentation."""
     prompt = f"""
     Sei un ingegnere software che scrive documentazione per un team aziendale.
     Il tuo compito è aggiornare la documentazione per uno specifico componente React chiamato '{component_name}'.
@@ -81,7 +80,11 @@ def generate_new_documentation(component_name, file_diff, current_docs):
         print(prompt)
         print("="*60 + "\n")
 
-    headers = {"Content-Type": "application/json"}
+    # Aggiornato: La chiave API viene passata nell'header per maggiore sicurezza.
+    headers = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": API_KEY
+    }
     data = {"contents": [{"parts": [{"text": prompt}]}]}
 
     try:
@@ -104,7 +107,7 @@ def generate_new_documentation(component_name, file_diff, current_docs):
         return None
 
 def commit_and_push_changes(updated_docs):
-    """Committa e invia tutti i file di documentazione aggiornati."""
+    """Commit and send all the updated docs to the repo"""
     subprocess.run(["git", "config", "--global", "user.name", GIT_BOT_NAME])
     subprocess.run(["git", "config", "--global", "user.email", GIT_BOT_EMAIL])
 
