@@ -32,6 +32,8 @@ jobs:
 
       - name: Run AI Documentation Script
         env:
+          BOT_API_KEY: ${{ secrets.BOT_API_KEY }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DEBUG_MODE: "true" # Enable detailed logging
         run: python ./scripts/generate_docs.py
