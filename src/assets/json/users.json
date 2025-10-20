@@ -1,0 +1,73 @@
+[
+    {
+      "id": 1,
+      "name": "Mario",
+      "surname": "Rossi",
+      "date_of_birth": "1990-05-15",
+      "job": "Frontend Developer",
+      "studies": "Degree in Computer Science",
+      "addresses": [
+        {
+          "type": "residence",
+          "street": "Via Roma 10",
+          "city": "Milan",
+          "zip_code": "20121"
+        },
+        {
+          "type": "domicile",
+          "street": "Viale della Liberazione 5",
+          "city": "Milan",
+          "zip_code": "20124"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Giulia",
+      "surname": "Bianchi",
+      "date_of_birth": "1995-11-22",
+      "job": "UI/UX Designer",
+      "studies": "Diploma Academy of Fine Arts",
+      "addresses": [
+        {
+          "type": "residence",
+          "street": "Corso Vittorio Emanuele II 25",
+          "city": "Turin",
+          "zip_code": "10123"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Luca",
+      "surname": "Verdi",
+      "date_of_birth": "1988-01-30",
+      "job": "Project Manager",
+      "studies": "Degree in Management Engineering",
+      "addresses": [
+        {
+          "type": "residence",
+          "street": "Lungotevere in Augusta",
+          "city": "Rome",
+          "zip_code": "00186"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Anna",
+      "surname": "Neri",
+      "date_of_birth": "1998-09-10",
+      "job": "Functional Analyst",
+      "studies": "Master's Degree in Economics",
+      "addresses": [
+        {
+          "type": "residence",
+          "street": "Via Toledo 400",
+          "city": "Naples",
+          "zip_code": "80134"
+        }
+      ]
+    }
+  ]
+  

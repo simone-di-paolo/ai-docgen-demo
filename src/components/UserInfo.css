@@ -1,0 +1,145 @@
+/* === Stili per il componente UserInfo === */
+
+.user-info-wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.user-info-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.user-info-selection label {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #f0f0f0;
+}
+
+.user-info-selection select {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.user-info-selection select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.4);
+}
+
+.user-card {
+    background: #2c2c2c;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+.user-card-header {
+    background-color: #3a3a3a;
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #444;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    border: 3px solid #fff;
+}
+
+.user-card-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.user-card-header p {
+    margin: 0.25rem 0 0;
+    color: #ccc;
+    font-size: 1.1rem;
+}
+
+.user-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-info-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info-row span {
+    font-size: 1.5rem;
+}
+
+.user-info-row p {
+    margin: 0;
+    font-size: 1rem;
+    color: #ddd;
+}
+
+.address-list {
+    list-style: none;
+    padding-left: 2.5rem; /* Allinea con il testo delle altre righe */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.address-item p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #bbb;
+}
+
+.user-info-placeholder {
+    text-align: center;
+    padding: 3rem;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Animazione */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
