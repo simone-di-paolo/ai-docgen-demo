@@ -4,6 +4,7 @@ function InteractiveDemo() {
   const [themeColor, setThemeColor] = useState('#8a3ffc');
   const [fontSize, setFontSize] = useState(16);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [textAreaText, setTextAreaText] = useState('Usa i controlli qui sotto per modificare il mio aspetto. Dimensione, font e colore del titolo cambieranno.');
   const [fontFamily, setFontFamily] = useState('Roboto, sans-serif');
 
   const themeStyles = {
@@ -11,6 +12,10 @@ function InteractiveDemo() {
     fontSize: `${fontSize}px`,
     fontFamily: fontFamily,
   };
+
+  const textAreaHandler = () => {
+    setTextAreaText(document.querySelector('.demo-text-area').value);
+  }
 
   return (
     <section id="interactive-demo" className={`interactive-demo ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -21,7 +26,7 @@ function InteractiveDemo() {
         <div className="demo-preview" style={themeStyles}>
           <div className="preview-card">
             <h4 className="preview-title" style={{ color: themeColor }}>Card Personalizzabile</h4>
-            <p className="preview-text">Usa i controlli qui sotto per modificare il mio aspetto. Dimensione, font e colore del titolo cambieranno.</p>
+            <p className="preview-text">{textAreaText}</p>
             <button className="preview-button" style={{ backgroundColor: themeColor }}>Provalo!</button>
           </div>
         </div>
@@ -73,6 +78,13 @@ function InteractiveDemo() {
               />
               <span className="slider round"></span>
             </label>
+          </div>
+          <div className="control-group">
+            <label>Modifica descrizione</label>
+            <textarea
+              className="demo-text-area"
+              onChange={() => textAreaHandler()}
+            />
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ Questa sezione include ora controlli interattivi che permettono agli utenti di m
 - **Dimensione Font:** Un input numerico per modificare la dimensione del testo nel componente di anteprima.
 - **Tipo di Font:** Un menu a tendina per selezionare il font da utilizzare nel componente di anteprima. Le opzioni disponibili sono: Roboto, Arial, Georgia, Courier New e Brush Script.
 - **Modalità Dark/Light:** Un interruttore per attivare o disattivare la modalità scura, influenzando lo schema di colori generale.
+- **Modifica Descrizione:** Un'area di testo in cui gli utenti possono inserire il testo desiderato per la descrizione del componente di anteprima.
 
-Il componente di anteprima visualizza le modifiche in tempo reale. Le proprietà personalizzabili del componente di anteprima includono il colore del titolo, la dimensione del testo e il font utilizzato.
+Il componente di anteprima visualizza le modifiche in tempo reale. Le proprietà personalizzabili del componente di anteprima includono il colore del titolo, la dimensione del testo, il font utilizzato e la descrizione.
 ```
