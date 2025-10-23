@@ -61,7 +61,6 @@ function InteractiveDemo() {
               onChange={(e) => setFontFamily(e.target.value)}
               className="font-picker-select"
             >
-              <option value="Roboto, sans-serif">Roboto</option>
               <option value="Arial, sans-serif">Arial</option>
               <option value="Georgia, serif">Georgia</option>
               <option value="'Courier New', monospace">Courier New</option>
