@@ -18,6 +18,7 @@ function InteractiveDemo() {
   const [fontFamily, setFontFamily] = useState(DEFAULT_STATE.fontFamily);
   const [textAlign, setTextAlign] = useState(DEFAULT_STATE.textAlign);
   const [isUnderlined, setIsUnderlined] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
 
   const themeStyles = {
     '--dynamic-theme-color': themeColor,
@@ -39,6 +40,9 @@ function InteractiveDemo() {
         break;
       case 'underline':
         setIsUnderlined(!isUnderlined);
+        break;
+      case 'italic':
+        setIsItalic(!isItalic);
         break;
       default: break;
     }
