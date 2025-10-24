@@ -17,6 +17,7 @@ function InteractiveDemo() {
   const [textAreaText, setTextAreaText] = useState(DEFAULT_STATE.textAreaText);
   const [fontFamily, setFontFamily] = useState(DEFAULT_STATE.fontFamily);
   const [textAlign, setTextAlign] = useState(DEFAULT_STATE.textAlign);
+  const [isUnderlined, setIsUnderlined] = useState(false);
 
   const themeStyles = {
     '--dynamic-theme-color': themeColor,
@@ -35,6 +36,9 @@ function InteractiveDemo() {
         break;
       case 'capitalize':
         setTextAreaText(textAreaText.replace(/\b\w/g, char => char.toUpperCase()));
+        break;
+      case 'underline':
+        setIsUnderlined(!isUnderlined);
         break;
       default: break;
     }
@@ -55,7 +59,13 @@ function InteractiveDemo() {
     setTextAreaText(DEFAULT_STATE.textAreaText);
     setFontFamily(DEFAULT_STATE.fontFamily);
     setTextAlign(DEFAULT_STATE.textAlign);
+    setIsUnderlined(false);
   }
+
+  const pStyle = {
+    textAlign: textAlign,
+    textDecoration: isUnderlined ? 'underline' : 'none',
+  };
 
   return (
     <section id="interactive-demo" className={`interactive-demo ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -66,7 +76,7 @@ function InteractiveDemo() {
         <div className="demo-preview" style={themeStyles}>
           <div className="preview-card">
             <h4 className="preview-title" style={{ color: themeColor }}>Card Personalizzabile</h4>
-            <p className="preview-text" style={{ textAlign: textAlign }}>{textAreaText}</p>
+            <p className="preview-text" style={pStyle}>{textAreaText}</p>
             <button className="preview-button" style={{ backgroundColor: themeColor }}>Provalo!</button>
           </div>
         </div>
@@ -112,6 +122,7 @@ function InteractiveDemo() {
                 <button onClick={() => handleTextTransform('uppercase')}>AA</button>
                 <button onClick={() => handleTextTransform('lowercase')}>aa</button>
                 <button onClick={() => handleTextTransform('capitalize')}>Aa</button>
+                <button onClick={() => handleTextTransform('underline')}>Underline</button>
             </div>
 
             <div className="button-group">
