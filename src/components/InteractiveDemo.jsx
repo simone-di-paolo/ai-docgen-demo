@@ -17,6 +17,7 @@ function InteractiveDemo() {
   const [textAreaText, setTextAreaText] = useState(DEFAULT_STATE.textAreaText);
   const [fontFamily, setFontFamily] = useState(DEFAULT_STATE.fontFamily);
   const [textAlign, setTextAlign] = useState(DEFAULT_STATE.textAlign);
+  const [isUnderlined, setIsUnderlined] = useState(false);
 
   const themeStyles = {
     '--dynamic-theme-color': themeColor,
@@ -35,6 +36,9 @@ function InteractiveDemo() {
         break;
       case 'capitalize':
         setTextAreaText(textAreaText.replace(/\b\w/g, char => char.toUpperCase()));
+        break;
+      case 'underline':
+        setIsUnderlined(!isUnderlined);
         break;
       default: break;
     }
@@ -55,10 +59,12 @@ function InteractiveDemo() {
     setTextAreaText(DEFAULT_STATE.textAreaText);
     setFontFamily(DEFAULT_STATE.fontFamily);
     setTextAlign(DEFAULT_STATE.textAlign);
+    setIsUnderlined(false);
   }
 
   const pStyle = {
     textAlign: textAlign,
+    textDecoration: isUnderlined ? 'underline' : 'none',
   };
 
   return (
@@ -116,6 +122,7 @@ function InteractiveDemo() {
                 <button onClick={() => handleTextTransform('uppercase')}>AA</button>
                 <button onClick={() => handleTextTransform('lowercase')}>aa</button>
                 <button onClick={() => handleTextTransform('capitalize')}>Aa</button>
+                <button onClick={() => handleTextTransform('underline')}>Underline</button>
             </div>
 
             <div className="button-group">
