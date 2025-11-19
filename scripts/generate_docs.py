@@ -18,7 +18,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 SRC_FOLDER = "src/"
 DOCS_DOTX_FOLDER = "docs/dotx/components/"
-TEMPLATE_PATH = "docs/dotx/template_documento.dotx"
+TEMPLATE_PATH = "docs/dotx/template_documento.docx"
 
 GIT_BOT_EMAIL = "actions-bot@github.com"
 GIT_BOT_NAME = "GitHub Actions Bot"
@@ -62,7 +62,7 @@ def get_changed_files():
             ["git", "diff", "HEAD~1", "HEAD", "--name-only", "--", SRC_FOLDER],
             capture_output=True, text=True, check=True
         ).stdout.strip()
-        return diff_output.split('\\n') if diff_output else []
+        return diff_output.split('\n') if diff_output else []
     except subprocess.CalledProcessError as e:
         error_msg = f"[ERROR] During git diff execution: {e}"
         print(error_msg)
@@ -202,35 +202,61 @@ def create_docx_from_json(component_name, json_data, template_path, output_path)
                 break
         
         if content_placeholder is None:
-            raise ValueError("{{CONTENT}} placeholder not found in the template.")
-
-        # Add sections from JSON
-        for section in json_data.get("sections", []):
-            if section.get("heading"):
-                doc.add_paragraph(section["heading"], style='Heading 2')
-            
-            for item in section.get("content", []):
-                if item.get("type") == "paragraph":
-                    p = doc.add_paragraph(style='Body Text')
-                    add_formatted_paragraph(p, item.get("text", ""))
+            # If placeholder is not found, append to the end
+            for section in json_data.get("sections", []):
+                if section.get("heading"):
+                    doc.add_paragraph(section["heading"], style='Heading 2')
                 
-                elif item.get("type") == "table":
-                    headers = item.get("headers", [])
-                    rows_data = item.get("rows", [])
-                    if headers and rows_data:
-                        table = doc.add_table(rows=1, cols=len(headers), style='Light Grid Accent 1')
-                        hdr_cells = table.rows[0].cells
-                        for i, header in enumerate(headers):
-                            hdr_cells[i].text = header
-                        
-                        for row_data in rows_data:
-                            row_cells = table.add_row().cells
-                            for i, cell_data in enumerate(row_data):
-                                row_cells[i].text = str(cell_data)
-        
-        # Remove placeholder paragraph
-        p_element = content_placeholder._element
-        p_element.getparent().remove(p_element)
+                for item in section.get("content", []):
+                    if item.get("type") == "paragraph":
+                        p = doc.add_paragraph(style='Body Text')
+                        add_formatted_paragraph(p, item.get("text", ""))
+                    
+                    elif item.get("type") == "table":
+                        headers = item.get("headers", [])
+                        rows_data = item.get("rows", [])
+                        if headers and rows_data:
+                            table = doc.add_table(rows=1, cols=len(headers), style='Light Grid Accent 1')
+                            hdr_cells = table.rows[0].cells
+                            for i, header in enumerate(headers):
+                                hdr_cells[i].text = header
+                            
+                            for row_data in rows_data:
+                                row_cells = table.add_row().cells
+                                for i, cell_data in enumerate(row_data):
+                                    row_cells[i].text = str(cell_data)
+
+        else:
+            # Add content before the placeholder, then remove it
+            for section in json_data.get("sections", []):
+                if section.get("heading"):
+                    content_placeholder.insert_paragraph_before(section["heading"], style='Heading 2')
+                
+                for item in section.get("content", []):
+                    if item.get("type") == "paragraph":
+                        p = content_placeholder.insert_paragraph_before(style='Body Text')
+                        add_formatted_paragraph(p, item.get("text", ""))
+                    
+                    elif item.get("type") == "table":
+                        headers = item.get("headers", [])
+                        rows_data = item.get("rows", [])
+                        if headers and rows_data:
+                            table = doc.add_table(rows=1, cols=len(headers), style='Light Grid Accent 1')
+                            hdr_cells = table.rows[0].cells
+                            for i, header in enumerate(headers):
+                                hdr_cells[i].text = header
+                            
+                            for row_data in rows_data:
+                                row_cells = table.add_row().cells
+                                for i, cell_data in enumerate(row_data):
+                                    row_cells[i].text = str(cell_data)
+                            # Move table before the placeholder
+                            content_placeholder._element.addprevious(table._element)
+
+            # Remove the placeholder paragraph itself
+            p_element = content_placeholder._element
+            p_element.getparent().remove(p_element)
+
 
         doc.save(output_path)
         return True
@@ -240,7 +266,6 @@ def create_docx_from_json(component_name, json_data, template_path, output_path)
         print(error_msg)
         send_telegram_message(error_msg)
         return False
-
 
 # === GIT OPS ===
 
@@ -263,13 +288,12 @@ def commit_and_push_changes(updated_docs):
         subprocess.run(["git", "commit", "-m", commit_message], check=True)
         subprocess.run(["git", "push"], check=True)
         success_msg = "🚀 Documentation sent successfully!"
-        print(f"\\n>>> {success_msg} <<<")
+        print(f"\n>>> {success_msg} <<<")
         send_telegram_message(success_msg)
     except subprocess.CalledProcessError as e:
         error_msg = f"Git operation failed: {e}"
         print(error_msg)
         send_telegram_message(f"❌ {error_msg}")
-
 
 # === MAIN WORKFLOW ===
 
@@ -285,7 +309,7 @@ if __name__ == "__main__":
 
     os.makedirs(DOCS_DOTX_FOLDER, exist_ok=True)
 
-    print("\\n--- PHASE 1: Detecting Changes ---")
+    print("\n--- PHASE 1: Detecting Changes ---")
     changed_files = get_changed_files()
     if not changed_files or all(f == '' for f in changed_files):
         msg = "✅ No source files modified in the last commit. Exiting."
@@ -294,11 +318,11 @@ if __name__ == "__main__":
         send_telegram_message("🤖 ===== END OF DOCX SCRIPT =====")
         exit()
         
-    msg = f"🔍 Detected modified files: `{'`, `'.join(changed_files)}`"
+    msg = f"🔍 Detected modified files: `{', '.join(changed_files)}`"
     print(msg)
     send_telegram_message(msg)
 
-    print("\\n--- PHASE 2: Grouping Diffs by Component ---")
+    print("\n--- PHASE 2: Grouping Diffs by Component ---")
     component_diffs = {}
     for file_path in changed_files:
         if not (file_path.endswith(".jsx") or file_path.endswith(".css")):
@@ -323,16 +347,16 @@ if __name__ == "__main__":
         ).stdout
         component_diffs[component_name].append(file_diff_output)
     
-    send_telegram_message(f"📊 Diffs grouped for the following components: `{'`, `'.join(component_diffs.keys())}`")
+    send_telegram_message(f"📊 Diffs grouped for the following components: `{', '.join(component_diffs.keys())}`")
     print("Diffs grouped successfully.")
 
-    print("\\n--- PHASE 3: Processing and Generating Documentation ---")
+    print("\n--- PHASE 3: Processing and Generating Documentation ---")
     updated_doc_files = []
     for component_name, diffs in component_diffs.items():
         doc_path = os.path.join(DOCS_DOTX_FOLDER, f"{component_name}.docx")
-        full_diff = "\\n".join(diffs)
+        full_diff = "\n".join(diffs)
 
-        print(f"\\n-> Processing Component: {component_name}")
+        print(f"\n-> Processing Component: {component_name}")
         send_telegram_message(f"⚙️ Processing component: *{component_name}*")
         
         json_documentation = generate_new_documentation(component_name, full_diff)
@@ -353,7 +377,7 @@ if __name__ == "__main__":
             print(msg)
             send_telegram_message(f"🤷‍♂️ No documentation generated for `{component_name}`.")
 
-    print("\\n--- PHASE 4: Finalization ---")
+    print("\n--- PHASE 4: Finalization ---")
     if updated_doc_files:
         print("Documentation updates detected. Submitting changes...")
         commit_and_push_changes(updated_doc_files)
