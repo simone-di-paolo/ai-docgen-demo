@@ -1,6 +1,6 @@
-/* === Stili per InteractiveDemo === */
+/* === InteractiveDemo Styles === */
 
-/* Stile per la Text Area migliorata */
+/* Improved Text Area Style */
 .demo-text-area {
     width: 100%;
     min-height: 100px;
@@ -18,10 +18,10 @@
 .demo-text-area:focus {
     outline: none;
     border-color: var(--dynamic-theme-color, var(--primary-color));
-    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.4); /* Usiamo un fallback */
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.4); /* Fallback */
 }
 
-/* Contatore caratteri e parole */
+/* Character and word counter */
 .char-counter {
     font-size: 0.8rem;
     color: #aaa;
@@ -30,7 +30,7 @@
     height: 1em;
 }
 
-/* Gruppo di pulsanti per trasformazione e allineamento */
+/* Button group for transformation and alignment */
 .button-group {
     display: flex;
     gap: 0.5rem;
@@ -53,21 +53,42 @@
     background-color: #555;
 }
 
-/* Pulsante di Reset */
-.reset-button {
-    width: 100%;
-    padding: 0.75rem;
+/* Action Buttons (Reset and Export) */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
     margin-top: 1rem;
-    background-color: #7d3c98; /* Un viola più scuro */
-    color: #fff;
+}
+
+.reset-button, .export-button {
+    flex: 1;
+    padding: 0.75rem;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease-in-out;
+}
+
+.reset-button {
+    background-color: #7d3c98; /* A darker purple */
+    color: #fff;
 }
 
 .reset-button:hover {
     background-color: #5d2177;
+}
+
+.export-button {
+    background-color: #3498db; /* A nice blue */
+    color: #fff;
+}
+
+.export-button:hover {
+    background-color: #2980b9;
+}
+
+.export-button:active {
+    transform: scale(0.98);
 }

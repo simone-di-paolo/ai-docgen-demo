@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import './InteractiveDemo.css'; // Importiamo il nuovo CSS
+import './InteractiveDemo.css'; // Import the new CSS
 
 const DEFAULT_STATE = {
   themeColor: '#8a3ffc',
   fontSize: 16,
   isDarkMode: true,
-  textAreaText: 'Usa i controlli qui sotto per modificare il mio aspetto. Dimensione, font e colore del titolo cambieranno.',
+  textAreaText: 'Use the controls below to change my appearance. The title color, font size, and font family will change.',
   fontFamily: 'Roboto, sans-serif',
   textAlign: 'left',
 };
@@ -18,6 +18,7 @@ function InteractiveDemo() {
   const [fontFamily, setFontFamily] = useState(DEFAULT_STATE.fontFamily);
   const [textAlign, setTextAlign] = useState(DEFAULT_STATE.textAlign);
   const [isUnderlined, setIsUnderlined] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const themeStyles = {
     '--dynamic-theme-color': themeColor,
@@ -25,7 +26,7 @@ function InteractiveDemo() {
     fontFamily: fontFamily,
   };
 
-  // Funzioni di trasformazione del testo
+  // Text transformation functions
   const handleTextTransform = (transform) => {
     switch(transform) {
       case 'uppercase':
@@ -44,14 +45,14 @@ function InteractiveDemo() {
     }
   }
 
-  // Conteggio caratteri e parole
+  // Character and word count
   const wordCount = useMemo(() => {
     return textAreaText.trim().split(/\s+/).filter(Boolean).length;
   }, [textAreaText]);
 
   const charCount = textAreaText.length;
 
-  // Funzione di Reset
+  // Reset function
   const handleReset = () => {
     setThemeColor(DEFAULT_STATE.themeColor);
     setFontSize(DEFAULT_STATE.fontSize);
@@ -61,6 +62,50 @@ function InteractiveDemo() {
     setTextAlign(DEFAULT_STATE.textAlign);
     setIsUnderlined(false);
   }
+  
+    const handleExportCss = () => {
+    const cssOutput = `
+.custom-card {
+  background-color: ${isDarkMode ? '#2c2c2c' : '#ffffff'};
+  color: ${isDarkMode ? '#ffffff' : '#333333'};
+  border: 1px solid ${isDarkMode ? '#555' : '#ddd'};
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-family: ${fontFamily};
+  font-size: ${fontSize}px;
+}
+
+.custom-card-title {
+  color: ${themeColor};
+  font-size: 1.5em; /* Example size */
+  margin-bottom: 0.5em;
+}
+
+.custom-card-text {
+  text-align: ${textAlign};
+  text-decoration: ${isUnderlined ? 'underline' : 'none'};
+}
+
+.custom-card-button {
+  background-color: ${themeColor};
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-card-button:hover {
+  opacity: 0.9;
+}
+    `;
+
+    navigator.clipboard.writeText(cssOutput.trim());
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
 
   const pStyle = {
     textAlign: textAlign,
@@ -69,31 +114,31 @@ function InteractiveDemo() {
 
   return (
     <section id="interactive-demo" className={`interactive-demo ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      <h2 className="section-title">Personalizza in Tempo Reale</h2>
+      <h2 className="section-title">Real-Time Customization</h2>
       <div className="demo-container">
 
         {/* Preview Area */}
         <div className="demo-preview" style={themeStyles}>
           <div className="preview-card">
-            <h4 className="preview-title" style={{ color: themeColor }}>Card Personalizzabile</h4>
+            <h4 className="preview-title" style={{ color: themeColor }}>Customizable Card</h4>
             <p className="preview-text" style={pStyle}>{textAreaText}</p>
-            <button className="preview-button" style={{ backgroundColor: themeColor }}>Provalo!</button>
+            <button className="preview-button" style={{ backgroundColor: themeColor }}>Try it!</button>
           </div>
         </div>
 
         {/* Controls Area */}
         <div className="demo-controls">
-          {/* Controlli Esistenti */}
+          {/* Existing Controls */}
           <div className="control-group">
-            <label htmlFor="color-picker">Colore del Tema</label>
+            <label htmlFor="color-picker">Theme Color</label>
             <input type="color" id="color-picker" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
           </div>
           <div className="control-group">
-            <label htmlFor="font-slider">Dimensione Font ({fontSize}px)</label>
+            <label htmlFor="font-slider">Font Size ({fontSize}px)</label>
             <input type="range" id="font-slider" min="12" max="24" value={fontSize} onChange={(e) => setFontSize(e.target.value)} />
           </div>
           <div className="control-group">
-            <label htmlFor="font-picker">Tipo di Font</label>
+            <label htmlFor="font-picker">Font Family</label>
             <select id="font-picker" value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className="font-picker-select">
               <option value="Roboto, sans-serif">Roboto</option>
               <option value="Arial, sans-serif">Arial</option>
@@ -103,20 +148,20 @@ function InteractiveDemo() {
             </select>
           </div>
           <div className="control-group">
-            <label>Modalità</label>
+            <label>Mode</label>
             <label className="switch"><input type="checkbox" checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} /><span className="slider round"></span></label>
           </div>
 
-          {/* Nuovi Controlli per la Textarea */}
+          {/* New Textarea Controls */}
           <div className="control-group">
-            <label htmlFor="desc-editor">Modifica descrizione</label>
+            <label htmlFor="desc-editor">Edit Description</label>
             <textarea
               id="desc-editor"
               className="demo-text-area"
               value={textAreaText}
               onChange={(e) => setTextAreaText(e.target.value)}
             />
-            <div className="char-counter">{charCount} caratteri | {wordCount} parole</div>
+            <div className="char-counter">{charCount} characters | {wordCount} words</div>
             
             <div className="button-group">
                 <button onClick={() => handleTextTransform('uppercase')}>AA</button>
@@ -126,15 +171,20 @@ function InteractiveDemo() {
             </div>
 
             <div className="button-group">
-                <button onClick={() => setTextAlign('left')}>Sinistra</button>
-                <button onClick={() => setTextAlign('center')}>Centro</button>
-                <button onClick={() => setTextAlign('right')}>Destra</button>
+                <button onClick={() => setTextAlign('left')}>Left</button>
+                <button onClick={() => setTextAlign('center')}>Center</button>
+                <button onClick={() => setTextAlign('right')}>Right</button>
             </div>
 
           </div>
           
-          {/* Pulsante di Reset */}
-          <button className="reset-button" onClick={handleReset}>Reset</button>
+          {/* Action Buttons */}
+          <div className="action-buttons">
+            <button className="reset-button" onClick={handleReset}>Reset</button>
+            <button className="export-button" onClick={handleExportCss}>
+              {isCopied ? 'Copied!' : 'Export CSS'}
+            </button>
+          </div>
 
         </div>
       </div>
