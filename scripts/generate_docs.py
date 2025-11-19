@@ -15,7 +15,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 BOT_API_KEY = os.getenv("BOT_API_KEY")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 SRC_FOLDER = "src/"
 DOCS_DOTX_FOLDER = "docs/dotx/components/"
 TEMPLATE_PATH = "docs/dotx/template_documento.docx"
