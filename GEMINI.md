@@ -1,3 +1,4 @@
+
 # **AI Development Guidelines for React in Firebase Studio**
 
 These guidelines define the operational principles and capabilities of an AI agent (e.g., Gemini) interacting with React projects within the Firebase Studio environment. The goal is to enable an efficient, automated, and error-resilient application design and development workflow, focusing on modern React practices.
@@ -220,6 +221,15 @@ When requested, the AI will facilitate the creation and execution of tests, ensu
 * **Automated Test Execution:**
   * After generating or modifying tests, and after any significant code change, the AI will automatically execute the relevant tests using `npm test` in the terminal.
   * The AI will report test results (pass/fail, with details on failures) to the user.
+
+## **Automatic Documentation Generation**
+
+The project includes a script at `scripts/generate_docs.py` for automatically generating documentation for React components.
+
+*   **Triggering:** This script is intended to be run in a CI/CD pipeline (e.g., GitHub Actions) whenever changes are pushed to the `src` folder.
+*   **Process:** It detects which components have been modified, generates a git diff, and then calls the Gemini API to produce updated documentation.
+*   **Language:** The script is configured to generate all documentation in **English** to meet project requirements.
+*   **Output:** The generated documentation is saved as Markdown files in the `docs/` directory.
 
 ## **Iterative Development & User Interaction**
 
