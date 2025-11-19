@@ -18,7 +18,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 SRC_FOLDER = "src/"
 DOCS_DOTX_FOLDER = "docs/dotx/components/"
-TEMPLATE_PATH = "docs/dotx/template_document.dotx"
+TEMPLATE_PATH = "docs/dotx/template_documento.dotx"
 
 GIT_BOT_EMAIL = "actions-bot@github.com"
 GIT_BOT_NAME = "GitHub Actions Bot"
