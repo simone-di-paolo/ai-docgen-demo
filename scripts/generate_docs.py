@@ -6,9 +6,14 @@ import re
 
 # === CONFIGS ===
 
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEY = (os.getenv("GEMINI_API_KEY") or "").strip()
 BOT_API_KEY = os.getenv("BOT_API_KEY")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+if API_KEY:
+    print(f"-> API_KEY caricata correttamente (Lunghezza: {len(API_KEY)})")
+else:
+    print("-> ERRORE: GEMINI_API_KEY è vuota o non trovata!")
 
 GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent"
 DOCS_FOLDER = "docs/"
