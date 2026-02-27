@@ -10,7 +10,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 BOT_API_KEY = os.getenv("BOT_API_KEY")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent"
+GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent"
 DOCS_FOLDER = "docs/"
 SRC_FOLDER = "src/"
 GIT_BOT_EMAIL = "actions-bot@github.com"

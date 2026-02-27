@@ -15,7 +15,7 @@ function App() {
       <UserInfo />
       <Showcase />
       <footer className="app-footer" style={{ padding: '2rem', textAlign: 'center', opacity: 0.7 }}>
-        <p>AI DocGen Demo v1 - Powered by Google Gemini 1.5 Pro</p>
+        <p>AI DocGen Demo v2 - Powered by Google Gemini 2.5 Pro</p>
       </footer>
     </div>
   );
