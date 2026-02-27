@@ -151,6 +151,11 @@ def generate_doc_category(category_key, repo_context):
         print(f"[IA] Completato {category_key}!")
         return generated_text
         
+    except requests.exceptions.HTTPError as e:
+        print(f"❌ ERRORE HTTP generazione {category_key}: {e.response.status_code}")
+        print(f"  -> Dettaglio Gemini API: {e.response.text}")
+        send_telegram_message(f"❌ Errore HTTP generazione documentazione: {category_key}")
+        return None
     except Exception as e:
         print(f"❌ ERRORE generazione {category_key}: {e}")
         send_telegram_message(f"❌ Errore generazione documentazione: {category_key}")
