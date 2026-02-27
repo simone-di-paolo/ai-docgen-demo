@@ -3,6 +3,7 @@ import subprocess
 import requests
 import json
 import re
+import time
 
 # === CONFIGS ===
 
@@ -15,7 +16,7 @@ if API_KEY:
 else:
     print("-> ERRORE: GEMINI_API_KEY è vuota o non trovata!")
 
-GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent"
+GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent"
 DOCS_FOLDER = "docs/"
 SRC_FOLDER = "src/"
 GIT_BOT_EMAIL = "actions-bot@github.com"
@@ -197,6 +198,10 @@ if __name__ == "__main__":
                 f.write(doc_content)
                 
             updated_files.append(file_path)
+            
+        # Piccola pausa tra una generazione e l'altra per non saturare la quota gratuita
+        print("Attendo 5 secondi prima della prossima categoria...")
+        time.sleep(5)
             
     if updated_files:
         commit_and_push_changes(updated_files)
