@@ -9,19 +9,18 @@ from datetime import datetime
 
 # === CONFIGS ===
 
-# TOKEN per Gemini API
-GEMINI_API_KEY = (os.getenv("GEMINI_API_KEY") or "").strip()
-MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
-ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
-
+# TOKEN per GitHub Models
+GITHUB_TOKEN = (os.getenv("GH_MODELS_TOKEN") or "").strip()
+MODEL_NAME = os.getenv("GH_MODEL_NAME", "gpt-4o")
+ENDPOINT = os.getenv("GH_MODELS_ENDPOINT", "https://models.inference.ai.azure.com")
 
 BOT_API_KEY = os.getenv("BOT_API_KEY")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-if GEMINI_API_KEY:
-    print(f"-> GEMINI_API_KEY caricato correttamente (Lunghezza: {len(GEMINI_API_KEY)})")
+if GITHUB_TOKEN:
+    print(f"-> GH_MODELS_TOKEN caricato correttamente (Lunghezza: {len(GITHUB_TOKEN)})")
 else:
-    print("-> ERRORE: GEMINI_API_KEY è vuoto o non trovato!")
+    print("-> ERRORE: GH_MODELS_TOKEN è vuoto o non trovato!")
 DOCS_FOLDER = "docs/"
 SRC_FOLDER = "src/"
 GIT_BOT_EMAIL = "actions-bot@github.com"
@@ -191,59 +190,60 @@ def generate_doc_category(category_key, repo_context, is_incremental, existing_d
     else:
         prompt_instruction = "This is a FULL GENERATION. Read the following source code dump and generate the comprehensive documentation from scratch. Ensure the output is in ENGLISH.\n\n=== FULL SOURCE CODE ===\n"
 
-    prompt_text = f"{role}\n\n{prompt_instruction}\n```\n{repo_context}\n```\n\nOutput ONLY the final Markdown content. Do not add starting or concluding conversational text."
+    prompt = f"""
+    {role}
+    
+    {prompt_instruction}
+    ```
+    {repo_context}
+    ```
+    
+    Output ONLY the final Markdown content. Do not add starting or concluding conversational text.
+    """
 
-    print(f"[IA] Generando il file: {category_key} usando {MODEL_NAME} (Gemini)...")
-    send_telegram_message(f"🧠 Richiesta Gemini ({MODEL_NAME}) per: *{category_key}*")
+    print(f"[IA] Generando il file: {category_key} usando {MODEL_NAME}...")
+    send_telegram_message(f"🧠 Richiesta GitHub Models ({MODEL_NAME}) per: *{category_key}*")
 
-    # Formato Gemini API (REST)
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": prompt_text}
-                ]
-            }
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    
+    # Formato Chat Completions (standard OpenAI/GitHub Models)
+    data = {
+        "messages": [
+            {"role": "system", "content": role},
+            {"role": "user", "content": f"Analizza questo codice e genera la documentazione in Markdown:\n\n{repo_context}"}
         ],
-        "generationConfig": {
-            "temperature": 0.2,
-            "topP": 0.8,
-            "topK": 40,
-            "maxOutputTokens": 8192,
-        }
+        "model": MODEL_NAME,
+        "temperature": 0.2
     }
 
     try:
-        response = requests.post(ENDPOINT, json=payload, timeout=300)
+        url = f"{ENDPOINT}/chat/completions"
+        response = requests.post(url, headers=headers, json=data, timeout=300)
         response.raise_for_status()
         
         result = response.json()
+        generated_text = result["choices"][0]["message"]["content"].strip()
         
-        # Estrazione testo da struttura Gemini
-        if "candidates" in result and len(result["candidates"]) > 0:
-            generated_text = result["candidates"][0]["content"]["parts"][0]["text"].strip()
+        # Pulizia AI block tags (```markdown)
+        code_block_match = re.search(r'^```(?:markdown|md)?\s*([\s\S]*?)\s*```$', generated_text, flags=re.IGNORECASE)
+        if code_block_match:
+            generated_text = code_block_match.group(1).strip()
             
-            # Pulizia AI block tags (```markdown)
-            code_block_match = re.search(r'^```(?:markdown|md)?\s*([\s\S]*?)\s*```$', generated_text, flags=re.IGNORECASE)
-            if code_block_match:
-                generated_text = code_block_match.group(1).strip()
-                
-            print(f"[IA] Completato {category_key}!")
-            return generated_text
-        else:
-            print(f"❌ Risposta Gemini vuota o non valida: {result}")
-            return None
-            
+        print(f"[IA] Completato {category_key}!")
+        return generated_text
+        
     except requests.exceptions.HTTPError as e:
-        print(f"❌ ERRORE HTTP Gemini {category_key}: {e.response.status_code}")
+        print(f"❌ ERRORE HTTP generazione {category_key}: {e.response.status_code}")
         print(f"  -> Dettaglio API: {e.response.text}")
-        send_telegram_message(f"❌ Errore HTTP Gemini: {category_key}")
+        send_telegram_message(f"❌ Errore HTTP generazione documentazione: {category_key}")
         return None
     except Exception as e:
-        print(f"❌ ERRORE Gemini {category_key}: {e}")
-        send_telegram_message(f"❌ Errore Gemini: {category_key}")
+        print(f"❌ ERRORE generazione {category_key}: {e}")
+        send_telegram_message(f"❌ Errore generazione documentazione: {category_key}")
         return None
-
 
 # === MAIN WORKFLOW ===
 
@@ -311,5 +311,4 @@ if __name__ == "__main__":
         set_last_processed_commit(current_commit)
         commit_and_push_changes(updated_files_list)
         
-    send_telegram_message("🏁 ===== FINE RIGENERAZIONE WIKI (Gemini API) =====")
-
+    send_telegram_message("🏁 ===== FINE RIGENERAZIONE WIKI (GitHub Models) =====")
