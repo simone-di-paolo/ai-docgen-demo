@@ -35,6 +35,6 @@ jobs:
           BOT_API_KEY: ${{ secrets.BOT_API_KEY }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL_NAME: "gemini-1.5-flash"
+          GEMINI_MODEL_NAME: "gemini-2.5-flash-lite"
           DEBUG_MODE: "true" # Enable detailed logging
         run: python ./scripts/generate_docs.py
