@@ -284,20 +284,22 @@ if __name__ == "__main__":
         os.makedirs(cat_folder, exist_ok=True)
         file_path = os.path.join(cat_folder, f'{cat_data["filename"]}.md')
         
-        # Gestione Backup e Contenuto Esistente
+        # Leggi contenuto esistente per il contesto (necessario per incremental)
         existing_content = None
         if os.path.exists(file_path):
             with open(file_path, "r", encoding="utf-8") as f:
                 existing_content = f.read()
-            # Fai il backup solo se siamo in modalità incrementale (o sempre? facciamo sempre per sicurezza)
-            backup_path = backup_existing_doc(cat_folder, cat_data["filename"], current_commit)
-            if backup_path:
-                updated_files_list.append(backup_path)
                 
         # Ai Call
         doc_content = generate_doc_category(cat_key, repo_context, is_incremental, existing_content)
         
         if doc_content:
+            # Esegui il backup del file ATTUALE solo se l'AI ha generato un nuovo contenuto valido
+            backup_path = backup_existing_doc(cat_folder, cat_data["filename"], current_commit)
+            if backup_path:
+                updated_files_list.append(backup_path)
+            
+            # Sovrascrivi il file principale con la nuova doc
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(doc_content)
             updated_files_list.append(file_path)
