@@ -34,8 +34,7 @@ jobs:
         env:
           BOT_API_KEY: ${{ secrets.BOT_API_KEY }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          GH_MODELS_TOKEN: ${{ secrets.GH_MODELS_TOKEN }}
-          GH_MODEL_NAME: "gpt-4o"
-          GH_MODELS_ENDPOINT: "https://models.inference.ai.azure.com"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL_NAME: "gemini-1.5-flash"
           DEBUG_MODE: "true" # Enable detailed logging
         run: python ./scripts/generate_docs.py
