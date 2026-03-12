@@ -11,7 +11,7 @@ from datetime import datetime
 
 # TOKEN per Gemini API
 GEMINI_API_KEY = (os.getenv("GEMINI_API_KEY") or "").strip()
-MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
+MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
 ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
 
 BOT_API_KEY = os.getenv("BOT_API_KEY")
