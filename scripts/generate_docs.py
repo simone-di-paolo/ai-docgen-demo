@@ -21,7 +21,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 if GEMINI_API_KEY:
     print(f"-> GEMINI_API_KEY caricato correttamente (Lunghezza: {len(GEMINI_API_KEY)})")
 else:
-    print("-> ERRORE: GEMINI_API_KEY è vuoto o non trovato!")
+    print("-> ERRORE: GEMINI_API_KEY è vuoto o non trovato! Controlla le configurazioni!")
 DOCS_FOLDER = "docs/"
 SRC_FOLDER = "src/"
 GIT_BOT_EMAIL = "actions-bot@github.com"
